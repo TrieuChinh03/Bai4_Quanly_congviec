@@ -26,8 +26,8 @@
 
 
         <provider
-            android:name=".data.JobContentProvider"
-            android:authorities="com.example.jobapp.provider"
+            android:name=".data.TaskContentProvider"
+            android:authorities="dnt.kotlin.bai4_quanly_congviec.provider"
             android:exported="true"/>
 
     </application>

@@ -16,16 +16,13 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,8 +34,8 @@ import java.time.format.DateTimeFormatter
 
 @Preview
 @Composable
-private fun JobListScreenPreview() {
-    JobListScreen(navController = NavController(LocalContext.current))
+private fun TaskListScreenPreview() {
+    TaskListScreen(navController = NavController(LocalContext.current))
 }
 
 @Preview
@@ -48,7 +45,7 @@ private fun TaskItemPreview() {
 }
 
 @Composable
-fun JobListScreen(navController: NavController) {
+fun TaskListScreen(navController: NavController) {
     val tasks = remember { mutableStateListOf<Task>() }
     val context = LocalContext.current
     val contentResolver: ContentResolver = context.contentResolver

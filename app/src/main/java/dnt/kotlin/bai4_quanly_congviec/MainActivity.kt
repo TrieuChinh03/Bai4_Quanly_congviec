@@ -9,9 +9,9 @@ import androidx.compose.material3.Surface
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import dnt.kotlin.bai4_quanly_congviec.ui.screen.JobListScreen
-import dnt.kotlin.bai4_quanly_congviec.ui.screen.AddJobScreen
+import dnt.kotlin.bai4_quanly_congviec.ui.screen.AddTaskScreen
 import dnt.kotlin.bai4_quanly_congviec.ui.screen.Screens
+import dnt.kotlin.bai4_quanly_congviec.ui.screen.TaskListScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,8 +21,8 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             Surface(color = MaterialTheme.colorScheme.background) {
                 NavHost(navController, startDestination = Screens.TASK_LIST) {
-                    composable(Screens.TASK_LIST) { JobListScreen(navController) }
-                    composable(Screens.ADD_TASK) { AddJobScreen(navController) }
+                    composable(Screens.TASK_LIST) { TaskListScreen(navController) }
+                    composable(Screens.ADD_TASK) { AddTaskScreen(navController) }
                 }
             }
         }

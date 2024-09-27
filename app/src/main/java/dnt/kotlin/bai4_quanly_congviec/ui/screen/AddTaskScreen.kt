@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 @Composable
-fun AddJobScreen(navController: NavController) {
+fun AddTaskScreen(navController: NavController) {
     var taskName by remember { mutableStateOf("") }
     var taskDate by remember { mutableStateOf("") }
     var dialogError by remember { mutableStateOf(false) }

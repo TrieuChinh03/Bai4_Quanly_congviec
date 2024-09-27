@@ -9,17 +9,18 @@ import android.content.UriMatcher
 import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import dnt.kotlin.bai4_quanly_congviec.data.database.AppDatabase
 import dnt.kotlin.bai4_quanly_congviec.data.model.Task
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class JobContentProvider : ContentProvider() {
+class TaskContentProvider : ContentProvider() {
     private lateinit var db: AppDatabase
 
     companion object {
-        private const val AUTHORITY = "com.example.jobapp.provider"
+        private const val AUTHORITY = "dnt.kotlin.bai4_quanly_congviec.provider"
         val CONTENT_URI: Uri = Uri.parse("content://$AUTHORITY/tasks")
         const val TASK = 1
         private val uriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {
@@ -61,7 +62,7 @@ class JobContentProvider : ContentProvider() {
 @SuppressLint("Range")
 suspend fun loadTasks(contentResolver: ContentResolver, tasks: MutableList<Task>) {
     withContext(Dispatchers.IO) {
-        val cursor: Cursor? = contentResolver.query(JobContentProvider.CONTENT_URI, null, null, null, null)
+        val cursor: Cursor? = contentResolver.query(TaskContentProvider.CONTENT_URI, null, null, null, null)
         cursor?.use {
             while (it.moveToNext()) {
                 val task = Task(
@@ -83,7 +84,7 @@ suspend fun saveTask(context: Context, taskName: String, taskDate: String) {
                 put("name", taskName)
                 put("date", taskDate)
             }
-            context.contentResolver.insert(JobContentProvider.CONTENT_URI, contentValues)
+            context.contentResolver.insert(TaskContentProvider.CONTENT_URI, contentValues)
         } else {
             withContext(Dispatchers.Main) {
                 Toast.makeText(context, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show()
@@ -91,3 +92,15 @@ suspend fun saveTask(context: Context, taskName: String, taskDate: String) {
         }
     }
 }
+
+fun getDatabasePath(context: Context, databaseName: String): String {
+    // Lấy đường dẫn đầy đủ tới cơ sở dữ liệu dựa trên tên cơ sở dữ liệu
+    val dbPath = context.getDatabasePath(databaseName).absolutePath
+
+    // Log đường dẫn ra console (để kiểm tra)
+    Log.d("DatabasePath", "Database path: $dbPath")
+
+    // Trả về đường dẫn
+    return dbPath
+}
+
