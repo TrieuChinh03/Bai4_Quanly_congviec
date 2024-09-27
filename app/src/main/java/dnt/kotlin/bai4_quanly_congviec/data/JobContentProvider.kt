@@ -76,12 +76,12 @@ suspend fun loadTasks(contentResolver: ContentResolver, tasks: MutableList<Task>
 }
 
 //===   Lưu công việc    ===
-suspend fun saveJob(context: Context, jobName: String, jobDate: String) {
+suspend fun saveTask(context: Context, taskName: String, taskDate: String) {
     withContext(Dispatchers.IO) {
-        if (jobName.isNotEmpty() && jobDate.isNotEmpty()) {
+        if (taskName.isNotEmpty() && taskDate.isNotEmpty()) {
             val contentValues = ContentValues().apply {
-                put("name", jobName)
-                put("date", jobDate)
+                put("name", taskName)
+                put("date", taskDate)
             }
             context.contentResolver.insert(JobContentProvider.CONTENT_URI, contentValues)
         } else {

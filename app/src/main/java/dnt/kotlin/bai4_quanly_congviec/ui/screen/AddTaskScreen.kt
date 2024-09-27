@@ -6,7 +6,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import android.app.DatePickerDialog
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AlertDialog
@@ -17,7 +16,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
-import dnt.kotlin.bai4_quanly_congviec.data.saveJob
+import dnt.kotlin.bai4_quanly_congviec.data.saveTask
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -79,7 +78,7 @@ fun AddJobScreen(navController: NavController) {
             else {
                 coroutineScope.launch {
                     for (int in 1..10) { //-> Giả lập thêm 10 bản ghi
-                        saveJob(context, taskName, taskDate)
+                        saveTask(context, taskName, taskDate)
                     }
                     navController.popBackStack()
                 }
