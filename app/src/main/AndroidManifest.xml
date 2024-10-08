@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Bai4_Quanly_congviec"
         tools:targetApi="31">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -24,12 +25,11 @@
             </intent-filter>
         </activity>
 
-
         <provider
-            android:name=".data.TaskContentProvider"
+            android:name=".provider.TaskContentProvider"
             android:authorities="dnt.kotlin.bai4_quanly_congviec.provider"
-            android:exported="true"/>
-
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>

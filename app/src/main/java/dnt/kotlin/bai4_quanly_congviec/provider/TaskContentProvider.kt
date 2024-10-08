@@ -1,4 +1,4 @@
-package dnt.kotlin.bai4_quanly_congviec.data
+package dnt.kotlin.bai4_quanly_congviec.provider
 
 import android.annotation.SuppressLint
 import android.content.ContentProvider
@@ -9,8 +9,6 @@ import android.content.UriMatcher
 import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
-import android.util.Log
-import android.widget.Toast
 import dnt.kotlin.bai4_quanly_congviec.data.database.AppDatabase
 import dnt.kotlin.bai4_quanly_congviec.data.model.Task
 import kotlinx.coroutines.Dispatchers
@@ -33,24 +31,26 @@ class TaskContentProvider : ContentProvider() {
         return true
     }
 
-    override fun query(uri: Uri, projection: Array<String>?, selection: String?, selectionArgs: Array<String>?, sortOrder: String?): Cursor? {
-        val cursor = MatrixCursor(arrayOf("id", "name", "date"))
+    override fun query(uri: Uri, projection: Array<String>?, selection: String?, selectionArgs: Array<String>?, sortOrder: String?): Cursor {
+        val cursor = MatrixCursor(arrayOf("id", "title", "content", "date"))
         if (uriMatcher.match(uri) == TASK) {
-            val jobs = db.taskDao().getAllTasks()
-            for (job in jobs) {
-                cursor.addRow(arrayOf(job.id, job.name, job.date))
+            val tasks = db.taskDao().getAllTasks()
+            for (task in tasks) {
+                cursor.addRow(arrayOf(task.id, task.title, task.content, task.date))
             }
         }
         return cursor
     }
 
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
-        val job = Task(
-            name = values?.getAsString("name") ?: "",
+        val task = Task(
+            id = 0,
+            title = values?.getAsString("title") ?: "",
+            content = values?.getAsString("content") ?: "",
             date = values?.getAsString("date") ?: ""
         )
-        db.taskDao().insert(job)
-        return Uri.withAppendedPath(CONTENT_URI, job.id.toString())
+        db.taskDao().insert(task)
+        return Uri.withAppendedPath(CONTENT_URI, task.id.toString())
     }
 
     override fun update(uri: Uri, values: ContentValues?, selection: String?, selectionArgs: Array<String>?): Int = 0
@@ -67,7 +67,8 @@ suspend fun loadTasks(contentResolver: ContentResolver, tasks: MutableList<Task>
             while (it.moveToNext()) {
                 val task = Task(
                     id = it.getLong(it.getColumnIndex("id")),
-                    name = it.getString(it.getColumnIndex("name")),
+                    title = it.getString(it.getColumnIndex("title")),
+                    content = it.getString(it.getColumnIndex("content")),
                     date = it.getString(it.getColumnIndex("date"))
                 )
                 tasks.add(task)
@@ -77,30 +78,14 @@ suspend fun loadTasks(contentResolver: ContentResolver, tasks: MutableList<Task>
 }
 
 //===   Lưu công việc    ===
-suspend fun saveTask(context: Context, taskName: String, taskDate: String) {
+suspend fun saveTask(context: Context, task: Task) {
     withContext(Dispatchers.IO) {
-        if (taskName.isNotEmpty() && taskDate.isNotEmpty()) {
-            val contentValues = ContentValues().apply {
-                put("name", taskName)
-                put("date", taskDate)
-            }
-            context.contentResolver.insert(TaskContentProvider.CONTENT_URI, contentValues)
-        } else {
-            withContext(Dispatchers.Main) {
-                Toast.makeText(context, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show()
-            }
+        val contentValues = ContentValues().apply {
+            put("title", task.title)
+            put("content", task.content)
+            put("date", task.date)
         }
+        context.contentResolver.insert(TaskContentProvider.CONTENT_URI, contentValues)
     }
-}
-
-fun getDatabasePath(context: Context, databaseName: String): String {
-    // Lấy đường dẫn đầy đủ tới cơ sở dữ liệu dựa trên tên cơ sở dữ liệu
-    val dbPath = context.getDatabasePath(databaseName).absolutePath
-
-    // Log đường dẫn ra console (để kiểm tra)
-    Log.d("DatabasePath", "Database path: $dbPath")
-
-    // Trả về đường dẫn
-    return dbPath
 }
 

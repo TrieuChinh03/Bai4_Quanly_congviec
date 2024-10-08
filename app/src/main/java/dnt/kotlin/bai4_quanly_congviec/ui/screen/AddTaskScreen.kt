@@ -16,14 +16,17 @@ import androidx.compose.material3.TextField
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
-import dnt.kotlin.bai4_quanly_congviec.data.saveTask
+import dnt.kotlin.bai4_quanly_congviec.data.model.Task
+import dnt.kotlin.bai4_quanly_congviec.provider.saveTask
 import kotlinx.coroutines.launch
 import java.util.*
 
 @Composable
 fun AddTaskScreen(navController: NavController) {
-    var taskName by remember { mutableStateOf("") }
-    var taskDate by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf("") }
+    var content by remember { mutableStateOf("") }
+    var date by remember { mutableStateOf("") }
+
     var dialogError by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -33,11 +36,20 @@ fun AddTaskScreen(navController: NavController) {
             .fillMaxSize()
             .padding(16.dp)) {
 
-        //TEXTFIELD nhập tên công việc   --------------------------------------------
+        //TEXTFIELD nhập tiêu đề công việc   --------------------------------------------
         TextField(
-            value = taskName,
-            onValueChange = { taskName = it },
-            label = { Text("Tên Công Việc") },
+            value = title,
+            onValueChange = { title = it },
+            label = { Text("Tiêu đề") },
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+
+        //TEXTFIELD nhập nội dung công việc   --------------------------------------------
+        TextField(
+            value = content,
+            onValueChange = { content = it },
+            label = { Text("Nội dung") },
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -47,22 +59,20 @@ fun AddTaskScreen(navController: NavController) {
         Row {
             //BUTTON chọn ngày thực hiện   --------------------------------------------
             Button(onClick = {
-                showDatePicker(context) { date -> taskDate = date }
+                showDatePicker(context) { dateSelected -> date = dateSelected }
             }) {
                 Icon(
                     imageVector = Icons.Default.DateRange,
                     contentDescription = "Select Date",
                     modifier = Modifier.size(24.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Chọn Ngày Thực Hiện")
             }
 
             //TEXT hiển thị ngày thực hiện   --------------------------------------------
             Spacer(modifier = Modifier.weight(1f))
-            if (taskDate.isNotEmpty()) {
+            if (date.isNotEmpty()) {
                 Text(
-                    text = "Ngày Thực Hiện: $taskDate",
+                    text = "Ngày: $date",
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                 )
@@ -72,24 +82,19 @@ fun AddTaskScreen(navController: NavController) {
         //BUTTON lưu công việc  ------------------------------------------------
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
-            if (taskName.isEmpty() || taskDate.isEmpty()) {
+            if (title.isEmpty() || content.isEmpty() || date.isEmpty()) {
                 dialogError = true
             }
             else {
                 coroutineScope.launch {
-                    for (int in 1..10) { //-> Giả lập thêm 10 bản ghi
-                        saveTask(context, taskName, taskDate)
-                    }
+                    saveTask(context, Task(0, title, content, date))
                     navController.popBackStack()
                 }
             }
         }) {
-            Text("Lưu Công Việc")
+            Text("Lưu")
 
-            if(dialogError) showDialog(
-                title = "Lỗi",
-                content = "Vui lòng nhập đầy đủ thông tin"
-            ) { dialogError = false }
+            if(dialogError) DialogError { dialogError = false }
         }
     }
 }
@@ -112,16 +117,13 @@ private fun showDatePicker(context: Context, onDateSelected: (String) -> Unit) {
 
 //===   Hiển thị dialog thông báo   ===
 @Composable
-private fun showDialog(title: String, content: String, onDismiss: () -> Unit) {
+private fun DialogError(onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = {
             onDismiss()
         },
         title = {
-            Text(title)
-        },
-        text = {
-            Text(content)
+            Text("Vui lòng nhập đầy đủ thông tin")
         },
         confirmButton = {
             Button(onClick = { onDismiss() }) {

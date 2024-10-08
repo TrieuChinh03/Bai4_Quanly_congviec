@@ -7,7 +7,7 @@ import android.content.Context
 import dnt.kotlin.bai4_quanly_congviec.data.dao.TaskDao
 import dnt.kotlin.bai4_quanly_congviec.data.model.Task
 
-@Database(entities = [Task::class], version = 3)
+@Database(entities = [Task::class], version = 4)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun taskDao(): TaskDao
 

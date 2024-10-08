@@ -10,7 +10,6 @@ import android.content.ContentResolver
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -26,7 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import dnt.kotlin.bai4_quanly_congviec.data.loadTasks
+import dnt.kotlin.bai4_quanly_congviec.provider.loadTasks
 import dnt.kotlin.bai4_quanly_congviec.data.model.Task
 import dnt.kotlin.bai4_quanly_congviec.ui.theme.Background_Item
 import kotlinx.coroutines.delay
@@ -41,16 +40,16 @@ private fun TaskListScreenPreview() {
 @Preview
 @Composable
 private fun TaskItemPreview() {
-    TaskItem(task = Task(2, "Công việc 1", "21/09/2023"))
+    TaskItem(task = Task(2, "Công việc 1", "Nội dung công việc 1","21/09/2023"))
 }
 
 @Composable
 fun TaskListScreen(navController: NavController) {
     val tasks = remember { mutableStateListOf<Task>() }
+    val current = remember { mutableIntStateOf(1) }
+
     val context = LocalContext.current
     val contentResolver: ContentResolver = context.contentResolver
-
-    var current = -1
 
     LaunchedEffect(Unit) {
         loadTasks(contentResolver, tasks)
@@ -69,8 +68,8 @@ fun TaskListScreen(navController: NavController) {
                 .align(Alignment.TopCenter)
         ) {
             itemsIndexed(tasks) { index, task ->
-                if(current < index) {
-                    current = index
+                if(current.intValue < index) {
+                    current.intValue = index
                     AdapterTast(task = task, animation = true, delay = 50L * index)
                 }
                 else {
@@ -131,21 +130,22 @@ fun TaskItem(task: Task) {
                 .padding(12.dp)
         ) {
             //---   Tên công việc   ---
-            task.name?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            Text(
+                text = task.title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+
+            Text(
+                text = task.content,
+                style = MaterialTheme.typography.bodyMedium
+            )
 
             //---   Ngày thực hiện   ---
             Spacer(modifier = Modifier.height(8.dp))
-            task.date?.let {
-                Text(
-                    text = it.format(DateTimeFormatter.ofPattern("dd 'ngày' MM 'tháng' yyyy")),
-                )
-            }
+            Text(
+                text = task.date.format(DateTimeFormatter.ofPattern("dd 'ngày' MM 'tháng' yyyy")),
+            )
         }
     }
 }
